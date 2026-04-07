@@ -38,3 +38,41 @@ sudo WAZUH_MANAGER='your-cloud-address' apt-get install wazuh-agent
 sudo systemctl daemon-reload
 sudo systemctl enable wazuh-agent
 sudo systemctl start wazuh-agent
+
+
+```
+
+### 2. Windows Host Monitoring
+
+The Windows endpoint serves as the primary monitored system in this lab.
+
+#### Sysmon Installation
+Sysmon was deployed to enhance Windows logging by capturing:
+- Process creation events  
+- Network connections  
+- PowerShell activity  
+
+#### Wazuh Agent Installation
+The Wazuh agent was installed and enrolled using the Wazuh Cloud deployment method.
+
+#### Sysmon Log Integration
+To ensure Wazuh ingests Sysmon logs, the following configuration was added to `ossec.conf`:
+
+```xml
+<localfile>
+  <location>Microsoft-Windows-Sysmon/Operational</location>
+  <log_format>eventchannel</log_format>
+</localfile>
+```
+
+## Threat Simulation
+
+To validate detection capabilities, controlled attack scenarios were executed.
+
+### SSH Brute Force Attack (Kali → Target)
+
+A brute-force attack was simulated using Hydra:
+
+```bash
+hydra -l admin -P /usr/share/wordlists/rockyou.txt ssh://<target_ip>
+
